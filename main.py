@@ -4,6 +4,7 @@
 import pygame
 from pygame.locals import *
 import time
+import random
 
 
 class HeroPlane(object):
@@ -67,7 +68,6 @@ class EnemyPlane(object):
             if bullet.judge():
                 self.bullet_list.remove(bullet)
 
-
     def move(self):
         if self.direction == "right":
             self.x += 5
@@ -79,7 +79,9 @@ class EnemyPlane(object):
             self.direction = "right"
 
     def fire(self):
-        self.bullet_list.append(Bullet(self.screen, self.x, self.y))
+        random_num = random.randint(1, 100)
+        if random_num == 1 or random_num == 20:
+            self.bullet_list.append(EnemyBullet(self.screen, self.x, self.y))
 
 
 def key_control(hero_temp):
@@ -130,6 +132,26 @@ class Bullet(object):
             return False
 
 
+class EnemyBullet(object):
+    def __init__(self, screen_temp, x, y):
+        self.x = x + 25
+        self.y = y + 40
+        self.screen = screen_temp
+        self.image = pygame.image.load("./images/bullet1.png")
+
+    def display(self):
+        self.screen.blit(self.image, (self.x, self.y))
+
+    def move(self):
+        self.y += 15
+
+    def judge(self):
+        if self.y > 820:
+            return True
+        else:
+            return False
+
+
 def main():
     # 1、创建窗口
     screen = pygame.display.set_mode((480, 852), 0, 32)
@@ -145,6 +167,7 @@ def main():
         hero.display()
         enemy.display()
         enemy.move()
+        enemy.fire()
         pygame.display.update()
         key_control(hero)
         time.sleep(0.01)
